@@ -1,6 +1,210 @@
-<script>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>專業閒魚 & 精選好物代購 ✦ 個人委託</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-amber-100 selection:text-amber-900">
+
+  <!-- 頂部導航 -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
+      <div class="flex items-center space-x-2.5">
+        <span class="text-2xl p-1.5 bg-amber-100 rounded-xl">🐟</span>
+        <div>
+          <h1 class="text-base font-bold text-slate-900 tracking-tight leading-none">個人代購委託站</h1>
+          <span class="text-[11px] text-slate-500 font-medium">閒魚代拍 · 精選開團 · 海快包稅</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="#featured-products" class="text-xs font-semibold text-slate-600 hover:text-amber-600 hidden sm:inline-block transition">精選開團</a>
+        <a href="#calculator" class="text-xs font-semibold text-slate-600 hover:text-amber-600 hidden sm:inline-block transition">費用試算</a>
+        <a href="#order-form" class="bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-semibold px-4 py-2 rounded-xl text-xs sm:text-sm shadow-sm transition">送出委託</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8 space-y-12">
+
+    <!-- Hero 介紹 -->
+    <section class="text-center py-6 sm:py-8 max-w-2xl mx-auto">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 mb-3">
+        <span>✨</span> 最新匯率與海快航次更新中
+      </span>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-3">
+        各大平台中古周邊 · 即時溝通代拍
+      </h2>
+      <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+        閒魚 / 淘寶 / 微店 / 拼多多皆可委託。透明算式公開，海快全包稅每公斤只要 <strong class="text-amber-600 font-bold">NT$ 70</strong>，亦可直接選購下方現正開團的精選熱門商品！
+      </p>
+    </section>
+
+    <!-- 區塊一：自行上架精選商品開團展示區 (可選購) -->
+    <section id="featured-products" class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 pb-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🔥</span>
+            <h3 class="text-xl font-bold text-slate-900">精選好物 & 熱門開團專區</h3>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">點擊「加入委託」即可自動帶入下方訂單清單，省去手動貼網址的麻煩！</p>
+        </div>
+        <span class="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-1 rounded-lg w-fit">
+          固定每週結單發貨
+        </span>
+      </div>
+
+      <!-- 商品卡片列表（由 JS 動態產生） -->
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- 區塊二：費用試算器 -->
+    <section id="calculator" class="bg-white p-6 sm:p-7 rounded-2xl shadow-sm border border-slate-200/80">
+      <div class="border-b border-slate-100 pb-3 mb-5">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <span>🧮</span> 自尋商品 · 費用即時試算
+        </h3>
+        <p class="text-xs text-slate-500 mt-1">若您是在閒魚自己尋找的商品，可在此預先試算台幣總額（基本匯率 4.8，滿 200 RMB 平台加收 3%，代購費 3.5% 最低 30 元）。</p>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">商品標價 (RMB)</label>
+          <input type="number" id="rmbPrice" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none transition text-sm" placeholder="例如：150" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">預估重量 (KG) - 海快 NT$70/KG 包稅</label>
+          <input type="number" id="weightKg" step="0.5" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none transition text-sm" placeholder="若暫不確定可填 0" value="1" />
+        </div>
+      </div>
+
+      <!-- 計算細項展開 -->
+      <div class="bg-amber-50/70 border border-amber-100 p-4 rounded-xl space-y-2 text-xs text-slate-700 mb-4">
+        <div class="flex justify-between">
+          <span>商品折合台幣（含平台手續費）：</span>
+          <span class="font-medium text-slate-900">NT$ <span id="itemTwd">0</span></span>
+        </div>
+        <div class="flex justify-between">
+          <span>代購服務費 (3.5%，單件最低 30 元)：</span>
+          <span class="font-medium text-slate-900">NT$ <span id="feeTwd">0</span></span>
+        </div>
+        <div class="flex justify-between">
+          <span>預估海快國際運費 (NT$70/KG，未滿 1KG 算 1KG)：</span>
+          <span class="font-medium text-slate-900">NT$ <span id="shippingTwd">0</span></span>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center bg-slate-900 text-white p-4 rounded-xl">
+        <div>
+          <span class="text-xs text-slate-400 block leading-tight">預估應付總金額</span>
+          <span class="text-xs text-amber-400/80">包含本體、代購費與預估運費</span>
+        </div>
+        <span class="text-2xl font-bold text-amber-400 tracking-tight">NT$ <span id="grandTotal">0</span></span>
+      </div>
+    </section>
+
+    <!-- 區塊三：委託流程與重要須知 -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+        <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <span>📦</span> 委託交易流程
+        </h4>
+        <ol class="space-y-2.5 text-xs text-slate-600 list-decimal list-inside leading-relaxed">
+          <li><strong>選擇商品或貼上連結</strong>：可直接點選上方開團商品，或貼上閒魚淘口令。</li>
+          <li><strong>確認報價與付款</strong>：送出後我會儘速聯繫報價，委託代拍需先付清商品款項。</li>
+          <li><strong>倉庫集運與二補運費</strong>：抵達集運倉後拍照回傳，依實際重量秤重計算海快運費。</li>
+          <li><strong>台灣本地寄送</strong>：抵台後可選 7-11 賣貨便 / 全家好賣家 / 郵寄 / 店到店。</li>
+        </ol>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+        <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <span>⚠️</span> 閒魚個人代購須知
+        </h4>
+        <ul class="space-y-2.5 text-xs text-slate-600 list-disc list-inside leading-relaxed">
+          <li><strong>二手性質無鑑賞期</strong>：閒魚賣家普遍售出不退，下單即代表接受賣家圖片與成色描述。</li>
+          <li><strong>責任邊界聲明</strong>：協助防範詐騙與賣家議價，但不對官方絕版正品真偽或出廠瑕疵負擔保責任。</li>
+          <li><strong>禁運品規範</strong>：含電池類、液體、動植物種子、食品肉類無法承運。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 區塊四：正式委託下單表單 -->
+    <section id="order-form" class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200/80">
+      <div class="border-b border-slate-100 pb-3 mb-6">
+        <h3 class="text-xl font-bold text-slate-900 mb-1">📝 提交代購委託單</h3>
+        <p class="text-xs text-slate-500">已為您整合開團選購商品與客製化網址。送出後將自動存入後台試算表，我會儘快聯繫您！</p>
+      </div>
+
+      <form id="orderForm" class="space-y-5">
+        
+        <!-- 已選購的精選開團商品清單展示 (若有加入) -->
+        <div id="selectedCartSection" class="hidden bg-slate-50 border border-slate-200 p-4 rounded-xl">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-slate-700">🛒 已選購的開團商品清單：</span>
+            <button type="button" onclick="clearCart()" class="text-[11px] text-red-500 hover:underline">清空商品</button>
+          </div>
+          <div id="cartItemsList" class="space-y-2"></div>
+          <div class="mt-3 pt-2 border-t border-slate-200 flex justify-between items-center text-xs font-semibold">
+            <span>開團商品小計：</span>
+            <span class="text-amber-600 text-sm">NT$ <span id="cartSubtotal">0</span></span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">您的稱呼 / 姓名 *</label>
+            <input type="text" id="custName" name="custName" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm transition" placeholder="例如：陳同學" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">聯絡管道 (LINE ID / IG / Threads / Email) *</label>
+            <input type="text" id="custContact" name="custContact" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm transition" placeholder="例如：LINE: xxx888" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1.5">自行尋找的商品連結或淘口令 (選填)</label>
+          <textarea id="customUrls" name="customUrls" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm transition" placeholder="若有其他要在閒魚/淘寶代拍的商品，請在此貼上網址或淘口令，若無可留空..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">指定規格 / 款式 / 備註</label>
+            <input type="text" id="itemSpec" name="itemSpec" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm transition" placeholder="例如：藍色 M 號、只要拆擺無損" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">最高心理預算 / 議價目標 (RMB 或 TWD)</label>
+            <input type="text" id="itemBudget" name="itemBudget" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm transition" placeholder="例如：閒魚希望談到 120 RMB 內" />
+          </div>
+        </div>
+
+        <input type="hidden" id="cartSummary" name="cartSummary" value="" />
+
+        <button type="submit" id="submitBtn" class="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-white font-bold py-3.5 rounded-xl transition duration-150 shadow-sm text-sm">
+          確認並送出委託需求
+        </button>
+
+        <div id="statusAlert" class="hidden p-3.5 rounded-xl text-xs font-semibold text-center"></div>
+      </form>
+    </section>
+
+  </main>
+
+  <footer class="text-center py-8 text-xs text-slate-400 border-t border-slate-200 bg-white">
+    © 2026 個人委託代購服務 · 僅提供委任代拍與國際轉運服務
+  </footer>
+
+  <script>
     /* ==========================================================
-       1. 自行上架商品資料庫 (修改、新增或刪除商品請在此處調整)
+       1. 自行上架商品資料庫
        ========================================================== */
     const myProducts = [
       {
@@ -175,7 +379,6 @@
     const submitBtn = document.getElementById('submitBtn');
     const statusAlert = document.getElementById('statusAlert');
 
-    // ★★★ 已更新為你的 Google Apps Script 正確網址 ★★★
     const SUBMIT_ENDPOINT = "https://script.google.com/macros/s/AKfycbzFyGNgrHs-9mM1Cm-EAVvxn4-sG147Mdh8Mhh_L7AwxwAFJ8rzzKR9m_ZLF_VkrTVE/exec";
 
     form.addEventListener('submit', async function(e) {
@@ -231,3 +434,5 @@
 
     renderProducts();
   </script>
+</body>
+</html>
