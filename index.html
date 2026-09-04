@@ -31,7 +31,7 @@
     <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
       <div class="border-b pb-3 mb-4">
         <h3 class="text-lg font-bold text-gray-900">🧮 費用即時試算</h3>
-        <p class="text-xs text-gray-500">基本匯率 4.8（含信用卡與基礎手續費），滿 200 RMB 鹹魚會多收3%手續費會自動計入平台費用，代購費 3.5%（最低 30 元）。</p>
+        <p class="text-xs text-gray-500">基本匯率 4.8（含信用卡與基礎手續費），滿 200 RMB 鹹魚會多收 3% 手續費會自動計入平台費用，代購費 3.5%（最低 30 元）。</p>
       </div>
       
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -79,7 +79,7 @@
           <li>確認購買需先匯款商品費用，收到款項後立即為您拍下。</li>
           <li>賣家發貨至集運倉，抵達後依實際重量秤重補拍二補運費。</li>
           <li>海快發出，約 5-8 個工作天配送至台灣。</li>
-          <li>收到貨後會請你選擇寄送方式，包含:賣貨便/好賣家/郵寄/店到店等等...。</li>
+          <li>收到貨後會請你選擇寄送方式，包含：賣貨便/好賣家/郵寄/店到店等。</li>
         </ol>
       </div>
 
@@ -95,43 +95,46 @@
       </div>
     </section>
 
-    <!-- 委託表單區 (改用 LINE 一鍵傳送) -->
+    <!-- 委託表單區 (直接發送 Email) -->
     <section id="order-form" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
       <h3 class="text-lg font-bold text-gray-900 mb-1">📝 提交閒魚代購需求</h3>
-      <p class="text-xs text-gray-500 mb-6">填寫後點擊下方按鈕，系統會自動排版並開啟 LINE 將委託資訊直接傳送給我！</p>
+      <p class="text-xs text-gray-500 mb-6">送出後資料會直接寄送給我，我會透過 FB / Threads / LINE / Email 聯絡您確認細節。</p>
 
-      <div class="space-y-4">
+      <!-- 注意：請將下方的 YOUR_FORM_ID_HERE 替換成你的 Formspree ID -->
+      <form id="contactForm" action="https://formspree.io/f/moeqleno" method="POST" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-gray-700 mb-1">稱呼 / 姓名 *</label>
-            <input type="text" id="orderName" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="王小明" />
+            <input type="text" name="買家姓名" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="王小明" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-700 mb-1">聯絡方式 (APP ID / 名稱 或 Email) *</label>
-            <input type="text" id="orderContact" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="請留 LINE ID 或電話" />
+            <input type="text" name="聯絡方式" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="請填寫常用聯絡管道" />
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-gray-700 mb-1">商品連結或淘口令 *</label>
-          <textarea id="orderUrl" rows="3" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="請貼上閒魚/淘寶/拚多多等分享連結或淘口令文字..."></textarea>
+          <textarea name="商品網址或淘口令" rows="3" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="請貼上閒魚/淘寶/拚多多等分享連結或淘口令文字..."></textarea>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold text-gray-700 mb-1">款式 / 規格 / 備註</label>
-            <input type="text" id="orderSpec" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="例如：只要黑色版、附外盒者" />
+            <input type="text" name="規格與備註" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="例如：只要黑色版、附外盒者" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-700 mb-1">最高心理預算 / 議價目標 (RMB)</label>
-            <input type="text" id="orderBudget" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="例如：標價 150，若能談到 130 就買" />
+            <input type="text" name="心理預算_RMB" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none text-sm" placeholder="例如：標價 150，若能談到 130 就買" />
           </div>
         </div>
 
-        <button type="button" onclick="sendToLine()" class="w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-3.5 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-sm">
-          <span>💬</span> 整理資料並透過 LINE 送出委託
+        <button type="submit" id="submitBtn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3.5 rounded-xl transition duration-150">
+          送出估價委託
         </button>
-      </div>
+
+        <p id="formStatus" class="hidden text-center text-sm font-semibold pt-2"></p>
+      </form>
     </section>
 
   </main>
@@ -141,6 +144,7 @@
   </footer>
 
   <script>
+    // 試算器邏輯
     const rmbInput = document.getElementById('rmbPrice');
     const weightInput = document.getElementById('weightKg');
     const itemTwdEl = document.getElementById('itemTwd');
@@ -160,25 +164,17 @@
         return;
       }
 
-      // 1. 基礎換算匯率：4.8 * 1.03 (閒魚基本手續費) * 1.01 (信用卡)
       let baseRate = 4.8 * 1.03 * 1.01;
-
-      // 2. 超過 200 RMB，閒魚加收 3%
       if (rmb > 200) {
         baseRate = baseRate * 1.03;
       }
 
-      // 3. 商品台幣金額
       const itemTwd = Math.round(rmb * baseRate);
-
-      // 4. 代購服務費：3.5%，低消 30 元台幣
       let fee = Math.round(itemTwd * 0.035);
       if (fee < 30) fee = 30;
 
-      // 5. 海快運費：70 元 / KG (不足 1KG 算 1KG，無重量則 0)
       const chargedWeight = weight > 0 ? Math.max(1, Math.ceil(weight)) : 0;
       const shippingTwd = chargedWeight * 70;
-
       const grandTotal = itemTwd + fee + shippingTwd;
 
       itemTwdEl.textContent = itemTwd.toLocaleString();
@@ -190,31 +186,46 @@
     rmbInput.addEventListener('input', calculate);
     weightInput.addEventListener('input', calculate);
 
-    function sendToLine() {
-      const name = document.getElementById('orderName').value.trim();
-      const contact = document.getElementById('orderContact').value.trim();
-      const url = document.getElementById('orderUrl').value.trim();
-      const spec = document.getElementById('orderSpec').value.trim() || '無特別要求';
-      const budget = document.getElementById('orderBudget').value.trim() || '無特別限制';
+    // 表單背景送出（AJAX）邏輯：防止頁面跳轉
+    const form = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('formStatus');
 
-      if (!name || !contact || !url) {
-        alert('請填寫完整稱呼、聯絡方式與商品連結！');
-        return;
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = '正在為您送出資料...';
+      submitBtn.classList.add('opacity-50');
+
+      const data = new FormData(form);
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          form.reset();
+          statusMsg.className = 'text-center text-sm font-semibold text-green-600 pt-2 block';
+          statusMsg.textContent = '🎉 委託已成功送出！我會儘快透過您留下的聯絡方式與您聯繫！';
+          submitBtn.textContent = '已成功送出';
+        } else {
+          statusMsg.className = 'text-center text-sm font-semibold text-red-600 pt-2 block';
+          statusMsg.textContent = '❌ 送出失敗，請確認 Formspree ID 是否設定正確。';
+          submitBtn.disabled = false;
+          submitBtn.textContent = '重新送出';
+          submitBtn.classList.remove('opacity-50');
+        }
+      } catch (error) {
+        statusMsg.className = 'text-center text-sm font-semibold text-red-600 pt-2 block';
+        statusMsg.textContent = '❌ 連線錯誤，請稍後再試。';
+        submitBtn.disabled = false;
+        submitBtn.textContent = '重新送出';
+        submitBtn.classList.remove('opacity-50');
       }
-
-      // 組合傳送到 LINE 的委託訊息
-      const message = `【商品代購委託單】\n` +
-                      `委託人：${name}\n` +
-                      `聯絡資訊：${contact}\n` +
-                      `商品連結 / 淘口令：\n${url}\n` +
-                      `規格要求：${spec}\n` +
-                      `預算 / 議價目標：${budget}`;
-
-      // 使用 LINE 官方分享協議，會自動喚醒手機或電腦版 LINE
-      const lineUrl = `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
-      
-      window.open(lineUrl, '_blank');
-    }
+    });
   </script>
 </body>
 </html>
