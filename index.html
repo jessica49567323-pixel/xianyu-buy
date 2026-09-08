@@ -1,7 +1,218 @@
-<script>
-    /* ==========================================================
-       1. 自行上架商品資料庫
-       ========================================================== */
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>專業閒魚代購 & 精選開團 ✦ 個人委託</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans TC', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-amber-100 selection:text-amber-900">
+
+  <!-- 頂部導航 -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
+      <div class="flex items-center space-x-2.5">
+        <span class="text-2xl p-1.5 bg-amber-100 rounded-xl">🐟</span>
+        <div>
+          <h1 class="text-base font-bold text-slate-900 tracking-tight leading-none">個人代購服務站</h1>
+          <span class="text-[11px] text-slate-500 font-medium">開團現貨 · 閒魚代拍 · 海快包稅</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="switchTab('order')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 transition">🛒 開團選購</button>
+        <button onclick="switchTab('quote')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">💬 貼連結詢價</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8 space-y-10">
+
+    <!-- Hero 介紹 -->
+    <section class="text-center py-4 max-w-2xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+        精選好物開團 · 各大平台代拍委託
+      </h2>
+      <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+        閒魚 / 淘寶 / 拼多多皆可委託。透明算式公開，海快全包稅每公斤只要 <strong class="text-amber-600 font-bold">NT$ 70</strong>。
+      </p>
+    </section>
+
+    <!-- 切換 Tab 選單 -->
+    <div class="flex justify-center border-b border-slate-200">
+      <div class="flex space-x-2">
+        <button id="tabBtnOrder" onclick="switchTab('order')" class="px-6 py-3 font-bold text-sm border-b-2 border-amber-500 text-amber-600 transition flex items-center gap-1.5">
+          <span>🛒</span> 1. 精選開團商品下單
+        </button>
+        <button id="tabBtnQuote" onclick="switchTab('quote')" class="px-6 py-3 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center gap-1.5">
+          <span>💬</span> 2. 自尋商品 · 估價與代拍
+        </button>
+      </div>
+    </div>
+
+    <!-- 模式 A：開團下單區 (對應 工作表1) -->
+    <div id="sectionOrder" class="space-y-8">
+      <!-- 開團商品列表 -->
+      <section>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span>🔥</span> 現正開團好物
+          </h3>
+          <span class="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-1 rounded-lg">固定週五結單發貨</span>
+        </div>
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"></div>
+      </section>
+
+      <!-- 開團下單表單 -->
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900 mb-1">📝 開團商品下單確認</h3>
+        <p class="text-xs text-slate-500 mb-5">請確認選購品項與規格，送出後資料會直接記錄至【工作表1】。</p>
+
+        <form id="groupOrderForm" class="space-y-4">
+          <!-- 購物車清單展示 -->
+          <div id="selectedCartSection" class="hidden bg-slate-50 border border-slate-200 p-4 rounded-xl">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-slate-700">🛒 已選購品項：</span>
+              <button type="button" onclick="clearCart()" class="text-[11px] text-red-500 hover:underline">清空商品</button>
+            </div>
+            <div id="cartItemsList" class="space-y-2"></div>
+            <div class="mt-3 pt-2 border-t border-slate-200 flex justify-between items-center text-xs font-bold">
+              <span>開團商品總計金額：</span>
+              <span class="text-amber-600 text-base">NT$ <span id="cartSubtotal">0</span></span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">委託人 (暱稱 / 稱呼) *</label>
+              <input type="text" id="orderNickname" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="例如：陳同學" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">真實姓名 *</label>
+              <input type="text" id="orderRealName" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="寄件超商取貨姓名" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">聯絡方式 (LINE ID / 手機號碼) *</label>
+              <input type="text" id="orderContact" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="請留 LINE ID 或電話" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">規格需求說明 (顏色/尺寸/備註)</label>
+              <input type="text" id="orderSpec" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="例如：黑色款、只要現貨" />
+            </div>
+          </div>
+
+          <button type="submit" id="orderSubmitBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-xl transition shadow-sm text-sm">
+            確認下單（寫入工作表1）
+          </button>
+          <div id="orderStatusAlert" class="hidden p-3 rounded-xl text-xs font-semibold text-center"></div>
+        </form>
+      </section>
+    </div>
+
+    <!-- 模式 B：自尋商品估價與詢價區 (對應 工作表2) -->
+    <div id="sectionQuote" class="hidden space-y-8">
+      <!-- 試算器 -->
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900 mb-1">🧮 費用即時試算</h3>
+        <p class="text-xs text-slate-500 mb-4">基本匯率 4.8（含刷卡手續費），滿 200 RMB 平台加收 3%，代購費 3.5%（低消 30 元），海快 NT$70/KG。</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">商品標價 (RMB)</label>
+            <input type="number" id="rmbPrice" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="例如：150" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">預估重量 (KG)</label>
+            <input type="number" id="weightKg" step="0.5" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" value="1" />
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center bg-slate-900 text-white p-4 rounded-xl">
+          <span class="text-xs text-slate-300">預估台幣總額（含代購費與運費）：</span>
+          <span class="text-xl font-bold text-amber-400">NT$ <span id="grandTotal">0</span></span>
+        </div>
+      </section>
+
+      <!-- 詢價表單 -->
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900 mb-1">💬 送出代拍詢價單</h3>
+        <p class="text-xs text-slate-500 mb-5">請貼上閒魚商品連結或淘口令，我會先查看賣家信用與狀況向您報價！</p>
+
+        <form id="quoteForm" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">姓名 *</label>
+              <input type="text" id="quoteName" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="例如：林小姐" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">聯絡方式 (LINE ID / IG / Email) *</label>
+              <input type="text" id="quoteContact" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="請留常用聯絡方式" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">商品連結 / 淘口令 *</label>
+            <textarea id="quoteUrl" rows="3" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="請貼上閒魚分享連結或淘口令文字..."></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">指定規格</label>
+              <input type="text" id="quoteSpec" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="例如：黑色、附盒子" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">備註 (心理預算 / 議價目標)</label>
+              <input type="text" id="quoteNotes" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-400 outline-none text-sm" placeholder="例如：希望談到 100 RMB 內出" />
+            </div>
+          </div>
+
+          <button type="submit" id="quoteSubmitBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition shadow-sm text-sm">
+            送出詢價單（寫入工作表2）
+          </button>
+          <div id="quoteStatusAlert" class="hidden p-3 rounded-xl text-xs font-semibold text-center"></div>
+        </form>
+      </section>
+    </div>
+
+  </main>
+
+  <footer class="text-center py-8 text-xs text-slate-400 border-t border-slate-200 bg-white">
+    © 2026 個人代購委託站 · 僅提供委任代拍與轉運服務
+  </footer>
+
+  <script>
+    // 已更新為你的 Google Apps Script 執行網址
+    const SUBMIT_ENDPOINT = "https://script.google.com/macros/s/AKfycbzFyGNgrHs-9mM1Cm-EAVvxn4-sG147Mdh8Mhh_L7AwxwAFJ8rzzKR9m_ZLF_VkrTVE/exec";
+
+    // Tab 切換
+    function switchTab(type) {
+      const secOrder = document.getElementById('sectionOrder');
+      const secQuote = document.getElementById('sectionQuote');
+      const btnOrder = document.getElementById('tabBtnOrder');
+      const btnQuote = document.getElementById('tabBtnQuote');
+
+      if (type === 'order') {
+        secOrder.classList.remove('hidden');
+        secQuote.classList.add('hidden');
+        btnOrder.className = "px-6 py-3 font-bold text-sm border-b-2 border-amber-500 text-amber-600 transition flex items-center gap-1.5";
+        btnQuote.className = "px-6 py-3 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center gap-1.5";
+      } else {
+        secOrder.classList.add('hidden');
+        secQuote.classList.remove('hidden');
+        btnQuote.className = "px-6 py-3 font-bold text-sm border-b-2 border-amber-500 text-amber-600 transition flex items-center gap-1.5";
+        btnOrder.className = "px-6 py-3 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center gap-1.5";
+      }
+    }
+
+    /* =================== 開團商品與購物車 =================== */
     const myProducts = [
       {
         id: "p1",
@@ -37,41 +248,32 @@
     function renderProducts() {
       const container = document.getElementById('productGrid');
       container.innerHTML = myProducts.map(p => `
-        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200/80 hover:shadow-md transition duration-200 flex flex-col justify-between p-4">
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 hover:shadow-md transition p-4 flex flex-col justify-between">
           <div>
             <div class="relative w-full h-44 bg-slate-100 rounded-xl overflow-hidden mb-3">
-              <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover" loading="lazy" />
-              <span class="absolute top-2.5 left-2.5 text-[11px] font-bold px-2 py-0.5 rounded-md border ${p.badgeColor}">
-                ${p.badge}
-              </span>
+              <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover" />
+              <span class="absolute top-2.5 left-2.5 text-[11px] font-bold px-2 py-0.5 rounded-md border ${p.badgeColor}">${p.badge}</span>
             </div>
-            <h4 class="font-bold text-sm text-slate-900 leading-snug line-clamp-2">${p.title}</h4>
-            <p class="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">${p.desc}</p>
+            <h4 class="font-bold text-sm text-slate-900">${p.title}</h4>
+            <p class="text-xs text-slate-500 mt-1">${p.desc}</p>
           </div>
-
           <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-            <div>
-              <span class="text-[11px] text-slate-400 block">代購優惠價</span>
-              <span class="text-base font-extrabold text-amber-600">NT$ ${p.priceTwd.toLocaleString()}</span>
-            </div>
-            <button type="button" onclick="addToCart('${p.id}')" class="text-xs font-bold bg-slate-900 hover:bg-amber-500 active:scale-95 text-white px-3.5 py-2 rounded-xl transition duration-150 flex items-center gap-1">
-              <span>＋</span> 加入委託
-            </button>
+            <span class="text-base font-extrabold text-amber-600">NT$ ${p.priceTwd.toLocaleString()}</span>
+            <button type="button" onclick="addToCart('${p.id}')" class="text-xs font-bold bg-slate-900 hover:bg-amber-500 text-white px-3.5 py-2 rounded-xl transition">＋ 加入委託</button>
           </div>
         </div>
       `).join('');
     }
 
-    function addToCart(productId) {
-      cart[productId] = (cart[productId] || 0) + 1;
+    function addToCart(id) {
+      cart[id] = (cart[id] || 0) + 1;
       updateCartDisplay();
-      document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function changeQty(productId, delta) {
-      if (!cart[productId]) return;
-      cart[productId] += delta;
-      if (cart[productId] <= 0) delete cart[productId];
+    function changeQty(id, delta) {
+      if (!cart[id]) return;
+      cart[id] += delta;
+      if (cart[id] <= 0) delete cart[id];
       updateCartDisplay();
     }
 
@@ -84,130 +286,68 @@
       const section = document.getElementById('selectedCartSection');
       const list = document.getElementById('cartItemsList');
       const subtotalEl = document.getElementById('cartSubtotal');
-      const summaryInput = document.getElementById('cartSummary');
-
       const itemIds = Object.keys(cart);
+
       if (itemIds.length === 0) {
         section.classList.add('hidden');
-        summaryInput.value = "";
         return;
       }
 
       section.classList.remove('hidden');
       let subtotal = 0;
-      let summaryTextList = [];
-
       list.innerHTML = itemIds.map(id => {
         const item = myProducts.find(p => p.id === id);
         const qty = cart[id];
         const lineTotal = item.priceTwd * qty;
         subtotal += lineTotal;
-        summaryTextList.push(`${item.title} x${qty} (小計NT$${lineTotal})`);
-
         return `
           <div class="flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
-            <div class="pr-2 truncate">
-              <span class="font-bold text-slate-800">${item.title}</span>
-              <span class="text-slate-400 block text-[11px]">單價 NT$ ${item.priceTwd}</span>
-            </div>
-            <div class="flex items-center gap-2 flex-shrink-0">
-              <div class="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
-                <button type="button" onclick="changeQty('${id}', -1)" class="px-2 py-0.5 hover:bg-slate-200 text-slate-600">-</button>
-                <span class="px-2 font-bold text-slate-800">${qty}</span>
-                <button type="button" onclick="changeQty('${id}', 1)" class="px-2 py-0.5 hover:bg-slate-200 text-slate-600">+</button>
-              </div>
-              <span class="font-bold text-amber-600 min-w-[65px] text-right">NT$ ${lineTotal.toLocaleString()}</span>
+            <span>${item.title}</span>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="changeQty('${id}', -1)" class="px-2 py-0.5 bg-slate-100 rounded">-</button>
+              <span class="font-bold">${qty}</span>
+              <button type="button" onclick="changeQty('${id}', 1)" class="px-2 py-0.5 bg-slate-100 rounded">+</button>
+              <span class="font-bold text-amber-600 min-w-[60px] text-right">NT$ ${lineTotal.toLocaleString()}</span>
             </div>
           </div>
         `;
       }).join('');
-
       subtotalEl.textContent = subtotal.toLocaleString();
-      summaryInput.value = summaryTextList.join('； ') + ` 【開團商品總計: NT$${subtotal}】`;
     }
 
-    /* ==========================================================
-       2. 閒魚自選試算器邏輯
-       ========================================================== */
-    const rmbInput = document.getElementById('rmbPrice');
-    const weightInput = document.getElementById('weightKg');
-    const itemTwdEl = document.getElementById('itemTwd');
-    const feeTwdEl = document.getElementById('feeTwd');
-    const shippingTwdEl = document.getElementById('shippingTwd');
-    const grandTotalEl = document.getElementById('grandTotal');
-
-    function calculate() {
-      const rmb = parseFloat(rmbInput.value) || 0;
-      const weight = parseFloat(weightInput.value) || 0;
-
-      if (rmb === 0) {
-        itemTwdEl.textContent = '0';
-        feeTwdEl.textContent = '0';
-        shippingTwdEl.textContent = '0';
-        grandTotalEl.textContent = '0';
-        return;
-      }
-
-      let baseRate = 4.8 * 1.03 * 1.01;
-      if (rmb > 200) baseRate = baseRate * 1.03;
-
-      const itemTwd = Math.round(rmb * baseRate);
-      let fee = Math.round(itemTwd * 0.035);
-      if (fee < 30) fee = 30;
-
-      const chargedWeight = weight > 0 ? Math.max(1, Math.ceil(weight)) : 0;
-      const shippingTwd = chargedWeight * 70;
-      const grandTotal = itemTwd + fee + shippingTwd;
-
-      itemTwdEl.textContent = itemTwd.toLocaleString();
-      feeTwdEl.textContent = fee.toLocaleString();
-      shippingTwdEl.textContent = shippingTwd.toLocaleString();
-      grandTotalEl.textContent = grandTotal.toLocaleString();
-    }
-
-    rmbInput.addEventListener('input', calculate);
-    weightInput.addEventListener('input', calculate);
-
-    /* ==========================================================
-       3. 表單送出與 Google Sheets 串接 (包含價格欄位)
-       ========================================================== */
-    const form = document.getElementById('orderForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusAlert = document.getElementById('statusAlert');
-
-    const SUBMIT_ENDPOINT = "https://script.google.com/macros/s/AKfycbzFyGNgrHs-9mM1Cm-EAVvxn4-sG147Mdh8Mhh_L7AwxwAFJ8rzzKR9m_ZLF_VkrTVE/exec";
-
-    form.addEventListener('submit', async function(e) {
+    /* =================== 表單 1：開團商品送出 (工作表1) =================== */
+    document.getElementById('groupOrderForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-
-      const custName = document.getElementById('custName').value.trim();
-      const custContact = document.getElementById('custContact').value.trim();
-      const customUrls = document.getElementById('customUrls').value.trim();
-      const cartSummary = document.getElementById('cartSummary').value.trim();
-
-      if (!cartSummary && !customUrls) {
-        alert('請至少選購一項「開團商品」或填寫「商品連結/淘口令」！');
+      const itemIds = Object.keys(cart);
+      if (itemIds.length === 0) {
+        alert('請先在上方點擊「＋ 加入委託」選購開團商品！');
         return;
       }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = '正在為您記錄委託需求...';
-      submitBtn.classList.add('opacity-60');
+      const btn = document.getElementById('orderSubmitBtn');
+      const alertBox = document.getElementById('orderStatusAlert');
+      btn.disabled = true;
+      btn.textContent = '正在記錄訂單...';
 
-      // 取得開團商品金額數值
-      const cartSubtotalEl = document.getElementById('cartSubtotal');
-      const cartSubtotalText = cartSubtotalEl ? cartSubtotalEl.textContent.replace(/,/g, '') : "0";
-      const totalAmount = parseInt(cartSubtotalText, 10) || 0;
+      let itemsSummary = [];
+      let total = 0;
+      itemIds.forEach(id => {
+        const item = myProducts.find(p => p.id === id);
+        const qty = cart[id];
+        const lineTotal = item.priceTwd * qty;
+        total += lineTotal;
+        itemsSummary.push(`${item.title} x ${qty}`);
+      });
 
       const payload = {
-        timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
-        name: custName,
-        contact: custContact,
-        selectedProducts: cartSummary || '無選購開團商品',
-        customUrls: customUrls || '無額外自選網址',
-        spec: document.getElementById('itemSpec').value.trim() || '無特別指定',
-        budget: document.getElementById('itemBudget').value.trim() || '無特別限制',
-        totalAmount: totalAmount > 0 ? `NT$ ${totalAmount.toLocaleString()}` : '自選品待報價'
+        type: "order",
+        orderTime: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
+        clientNickname: document.getElementById('orderNickname').value.trim(),
+        clientName: document.getElementById('orderRealName').value.trim(),
+        contact: document.getElementById('orderContact').value.trim(),
+        selectedProducts: itemsSummary.join('、 '),
+        spec: document.getElementById('orderSpec').value.trim() || '無',
+        totalAmount: `NT$ ${total.toLocaleString()}`
       };
 
       try {
@@ -217,22 +357,81 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-
-        statusAlert.className = "p-4 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 block";
-        statusAlert.innerHTML = '🎉 委託已成功送出！資料已自動記錄至後台試算表，我會儘速與您確認明細！';
-        form.reset();
+        alertBox.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 block";
+        alertBox.innerHTML = '🎉 開團下單成功！資料已寫入【工作表1】，我會儘快聯繫您！';
+        document.getElementById('groupOrderForm').reset();
         clearCart();
-        submitBtn.disabled = false;
-        submitBtn.textContent = '已送出成功';
-        submitBtn.classList.remove('opacity-60');
+        btn.disabled = false;
+        btn.textContent = '下單完成';
       } catch (err) {
-        statusAlert.className = "p-4 rounded-xl text-xs font-semibold bg-red-50 text-red-800 border border-red-200 block";
-        statusAlert.innerHTML = '❌ 傳送時發生錯誤，請稍後再試。';
-        submitBtn.disabled = false;
-        submitBtn.textContent = '重新送出';
-        submitBtn.classList.remove('opacity-60');
+        alertBox.className = "p-3 rounded-xl text-xs font-semibold bg-red-50 text-red-800 border border-red-200 block";
+        alertBox.innerHTML = '❌ 傳送錯誤，請稍後再試。';
+        btn.disabled = false;
+        btn.textContent = '重新下單';
+      }
+    });
+
+    /* =================== 試算器邏輯 =================== */
+    const rmbInput = document.getElementById('rmbPrice');
+    const weightInput = document.getElementById('weightKg');
+    const grandTotalEl = document.getElementById('grandTotal');
+
+    function calculate() {
+      const rmb = parseFloat(rmbInput.value) || 0;
+      const weight = parseFloat(weightInput.value) || 0;
+      if (rmb === 0) { grandTotalEl.textContent = '0'; return; }
+
+      let baseRate = 4.8 * 1.03 * 1.01;
+      if (rmb > 200) baseRate *= 1.03;
+      const itemTwd = Math.round(rmb * baseRate);
+      let fee = Math.round(itemTwd * 0.035);
+      if (fee < 30) fee = 30;
+      const shippingTwd = (weight > 0 ? Math.max(1, Math.ceil(weight)) : 0) * 70;
+      grandTotalEl.textContent = (itemTwd + fee + shippingTwd).toLocaleString();
+    }
+    rmbInput.addEventListener('input', calculate);
+    weightInput.addEventListener('input', calculate);
+
+    /* =================== 表單 2：詢價單送出 (工作表2) =================== */
+    document.getElementById('quoteForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('quoteSubmitBtn');
+      const alertBox = document.getElementById('quoteStatusAlert');
+      btn.disabled = true;
+      btn.textContent = '正在記錄詢價單...';
+
+      const payload = {
+        type: "quote",
+        quoteTime: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
+        name: document.getElementById('quoteName').value.trim(),
+        contact: document.getElementById('quoteContact').value.trim(),
+        productUrl: document.getElementById('quoteUrl').value.trim(),
+        spec: document.getElementById('quoteSpec').value.trim() || '無特別指定',
+        notes: document.getElementById('quoteNotes').value.trim() || '無'
+      };
+
+      try {
+        await fetch(SUBMIT_ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        alertBox.className = "p-3 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 block";
+        alertBox.innerHTML = '🎉 詢價單已成功送出！資料已寫入【工作表2】，我會先查看閒魚賣家狀況後向您報價！';
+        document.getElementById('quoteForm').reset();
+        grandTotalEl.textContent = '0';
+        btn.disabled = false;
+        btn.textContent = '詢價已送出';
+      } catch (err) {
+        alertBox.className = "p-3 rounded-xl text-xs font-semibold bg-red-50 text-red-800 border border-red-200 block";
+        alertBox.innerHTML = '❌ 傳送錯誤，請稍後再試。';
+        btn.disabled = false;
+        btn.textContent = '重新送出';
       }
     });
 
     renderProducts();
   </script>
+</body>
+</html>
